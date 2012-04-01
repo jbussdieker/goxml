@@ -11,11 +11,11 @@ void goXmlInit() {
 		(xmlFreeFunc)goXmlFree, 
 		(xmlMallocFunc)goXmlMalloc, 
 		(xmlReallocFunc)goXmlRealloc,
-      	strdup
+      	(xmlStrdupFunc)goXmlStrDup
 	);
 
-	char *_LIBXML_VERSION = strdup(LIBXML_DOTTED_VERSION);
-	char *_LIBXML_PARSER_VERSION = strdup(xmlParserVersion);
+	//char *_LIBXML_VERSION = strdup(LIBXML_DOTTED_VERSION);
+	//char *_LIBXML_PARSER_VERSION = strdup(xmlParserVersion);
 	//fprintf(stderr, "LIBXML_VERSION: %s\n", _LIBXML_VERSION);
 	//fprintf(stderr, "LIBXML_PARSER_VERSION: %s\n", _LIBXML_PARSER_VERSION);
 
@@ -25,5 +25,6 @@ void goXmlInit() {
 	//fprintf(stderr, "LIBXML_ICONV_ENABLED: %s\n", "false");
 #endif
 
-	xmlInitParser();
+	//xmlInitParser();
 }
+

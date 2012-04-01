@@ -1,45 +1,37 @@
 package dummy
 
 import "testing"
-import "fmt"
 import . "goxml"
 
-func stopTest(t *testing.T) {
-	if AllocSize() != 9 {
-		fmt.Println("Ending with", AllocSize(), "remaining allocations")
-		t.Fail()
-	}
-}
-
 func TestHtmlDocument(t *testing.T) {
-	d := NewHtmlDocument("<html>Test Html</html>")
-	//fmt.Println(d.String())
+	d := HtmlNewDoc("/", "")
 	d.Free()
 	stopTest(t)
 }
 
-func TestHtmlDocumentSet(t *testing.T) {
-	d := NewHtmlDocument("<html>Test 1</html>")
-	//fmt.Println(d.String())
-	d.Set("<html>Test 1 Set</html>")
-	//fmt.Println(d.String())
+func TestHtmlCopyDocument(t *testing.T) {
+	d := HtmlNewDoc("/", "")
+	dd := d.Copy(false)
+	d.Free()
+	dd.Free()
+
+	d = HtmlNewDoc("/", "")
+	dd = d.Copy(true)
+	d.Free()
+	dd.Free()
+}
+
+func TestHtmlAddChild(t *testing.T) {
+	d := HtmlNewDoc("/", "")
+	n := XmlNewNode("test")
+	d.AddChild(n)
 	d.Free()
 	stopTest(t)
 }
 
-func TestHtmlDocumentChildren(t *testing.T) {
-	d := NewHtmlDocument("<html><b>Test 1</b><span>Test 2</span></html>")
-	d.Children()
-	//fmt.Println(children.Length(), "children")
+func TestHtmlReadMemory(t *testing.T) {
+	d := HtmlReadMemory(" ", 1, "/", "UTF-8", HTML_PARSE_NOIMPLIED | HTML_PARSE_NOERROR)
 	d.Free()
 	stopTest(t)
 }
 
-func TestHtmlDocumentChild(t *testing.T) {
-	d := NewHtmlDocument("asdf")
-	//fmt.Println(d.String())
-	d.Child()
-	//fmt.Println("Child is: ", child.String(), "BAMF")
-	d.Free()
-	stopTest(t)
-}
