@@ -16,4 +16,3 @@ func TestXmlParseDoc(t *testing.T) {
 	doc.Free()
 	checkMemory(t)
 }
-

@@ -1,4 +1,5 @@
 package libxml
+
 /*
 #include <stdio.h>
 #include <string.h>
@@ -9,7 +10,6 @@ xmlDocPtr _xmlReadMemory(char *buffer) {
 	doc = xmlReadMemory(buffer, strlen(buffer), "", "UTF-8", 0);
 	return doc;
 }
-
 */
 import "C"
 import "unsafe"
@@ -19,5 +19,5 @@ func NewXmlFromString(buf string) Document {
 	cbuf := C.CString(buf)
 	cdoc := C._xmlReadMemory(cbuf)
 	C.free(unsafe.Pointer(cbuf))
-	return xmlDocPtr{ptr:cdoc}
+	return &xmlDocPtr{ptr: cdoc}
 }

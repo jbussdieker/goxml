@@ -1,6 +1,7 @@
 //
 // Package libxml implements the C library interface to libxml.
 package libxml
+
 /*
 #cgo pkg-config: libxml-2.0
 #cgo LDFLAGS: -lrt

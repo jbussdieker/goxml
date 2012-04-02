@@ -1,4 +1,5 @@
 package libxml
+
 /*
 #include <stdio.h>
 #include <libxml/HTMLtree.h>
@@ -27,42 +28,42 @@ func NewHtmlDoc(uri string, external_id string) Document {
 	cdoc := C._htmlNewDoc(curi, cexternal_id)
 	C.free(unsafe.Pointer(curi))
 	C.free(unsafe.Pointer(cexternal_id))
-	doc := htmlDocPtr{ptr:cdoc}
+	doc := &htmlDocPtr{ptr: cdoc}
 	return doc
 }
 
-func (doc htmlDocPtr) AddChild(name string, content string) Node {
+func (doc *htmlDocPtr) AddChild(name string, content string) Node {
 	// Implemented in xmlDoc
-	xmldoc := xmlDocPtr{ptr:_Ctype_xmlDocPtr(doc.ptr)}
+	xmldoc := &xmlDocPtr{ptr: _Ctype_xmlDocPtr(doc.ptr)}
 	return xmldoc.AddChild(name, content)
 }
 
-func (doc htmlDocPtr) Dump() Buffer {
+func (doc *htmlDocPtr) Dump() Buffer {
 	cbuf := C._htmlDocDump(doc.ptr)
-	buf := xmlBufferPtr{ptr:cbuf}
+	buf := &xmlBufferPtr{ptr: cbuf}
 	return buf
 }
 
-func (doc htmlDocPtr) GetRootElement() Node {
+func (doc *htmlDocPtr) GetRootElement() Node {
 	// Implemented in xmlDoc
-	xmldoc := xmlDocPtr{ptr:_Ctype_xmlDocPtr(doc.ptr)}
+	xmldoc := &xmlDocPtr{ptr: _Ctype_xmlDocPtr(doc.ptr)}
 	return xmldoc.GetRootElement()
 }
 
-func (doc htmlDocPtr) String() string {
+func (doc *htmlDocPtr) String() string {
 	buf := doc.Dump()
 	str := buf.String()
 	buf.Free()
 	return str
 }
 
-func (doc htmlDocPtr) Free() {
+func (doc *htmlDocPtr) Free() {
 	// Implemented in xmlDoc
-	if unsafe.Pointer(doc.ptr) != nil {
-		xmldoc := xmlDocPtr{ptr:_Ctype_xmlDocPtr(doc.ptr)}
+	if doc.ptr != nil {
+		xmldoc := &xmlDocPtr{ptr: _Ctype_xmlDocPtr(doc.ptr)}
 		xmldoc.Free()
+		doc.ptr = nil
 	} else {
 		panic("Document already freed")
 	}
 }
-

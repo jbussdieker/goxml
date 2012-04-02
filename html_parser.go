@@ -1,4 +1,5 @@
 package libxml
+
 /*
 #include <stdio.h>
 #include <string.h>
@@ -19,5 +20,5 @@ func NewHtmlFromString(buf string) Document {
 	cbuf := C.CString(buf)
 	cdoc := C._htmlReadMemory(cbuf)
 	C.free(unsafe.Pointer(cbuf))
-	return htmlDocPtr{ptr:cdoc}
+	return &htmlDocPtr{ptr: cdoc}
 }

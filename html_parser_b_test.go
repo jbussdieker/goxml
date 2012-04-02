@@ -8,4 +8,3 @@ func BenchmarkHtmlParseDoc(b *testing.B) {
 		doc.Free()
 	}
 }
-

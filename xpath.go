@@ -1,4 +1,5 @@
 package libxml
+
 /*
 #include <libxml/xpath.h>
 
@@ -26,9 +27,9 @@ func XmlXpathCompile(xpath string) Xpath {
 	cxpath := C.CString(xpath)
 	cxpathcomp := C._xmlXPathCompile(cxpath)
 	C.free(unsafe.Pointer(cxpath))
-	return xmlXPathCompExprPtr{ptr:cxpathcomp}
+	return &xmlXPathCompExprPtr{ptr: cxpathcomp}
 }
 
-func (xpath xmlXPathCompExprPtr) Free() {
+func (xpath *xmlXPathCompExprPtr) Free() {
 	C._xmlXPathFreeCompExpr(xpath.ptr)
 }

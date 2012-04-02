@@ -41,4 +41,3 @@ func TestHtmlNodeString(t *testing.T) {
 	doc.Free()
 	checkMemory(t)
 }
-

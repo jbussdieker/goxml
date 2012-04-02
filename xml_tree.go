@@ -1,4 +1,5 @@
 package libxml
+
 /*
 #include <stdio.h>
 #include <libxml/tree.h>
@@ -56,42 +57,46 @@ type xmlBufferPtr struct {
 func NewXmlDoc(version string) Document {
 	cversion := C.CString(version)
 	cdoc := C._xmlNewDoc(cversion)
-	doc := xmlDocPtr{ptr:cdoc}
+	doc := &xmlDocPtr{ptr: cdoc}
 	return doc
 }
 
-func (doc xmlDocPtr) Free() {
-	C._xmlFreeDoc(doc.ptr)
-	doc.ptr = nil
+func (doc *xmlDocPtr) Free() {
+	if doc.ptr != nil {
+		C._xmlFreeDoc(doc.ptr)
+		doc.ptr = nil
+	} else {
+		panic("xmlDoc already freed")
+	}
 }
 
-func (doc xmlDocPtr) Parse(buffer string) {
+func (doc *xmlDocPtr) Parse(buffer string) {
 }
 
-func (node xmlNodePtr) AddChild(name string, content string) Node {
+func (node *xmlNodePtr) AddChild(name string, content string) Node {
 	cname := C.CString(name)
 	ccontent := C.CString(content)
 	cnode := C._xmlAddNodeChild(node.ptr, cname, ccontent)
 	C.free(unsafe.Pointer(cname))
 	C.free(unsafe.Pointer(ccontent))
-	return xmlNodePtr{ptr:cnode}
+	return &xmlNodePtr{ptr: cnode}
 }
 
-func (node xmlNodePtr) Dump() Buffer {
+func (node *xmlNodePtr) Dump() Buffer {
 	cbuf := C._xmlNodeDump(node.ptr)
-	buf := xmlBufferPtr{ptr:cbuf}
+	buf := &xmlBufferPtr{ptr: cbuf}
 	return buf
 }
 
-func (node xmlNodePtr) String() string {
+func (node *xmlNodePtr) String() string {
 	buf := node.Dump()
 	str := buf.String()
 	buf.Free()
 	return str
 }
 
-func (node xmlNodePtr) Free() {
-	if unsafe.Pointer(node.ptr) != nil {
+func (node *xmlNodePtr) Free() {
+	if node.ptr != nil {
 		C._xmlUnlinkNode(node.ptr)
 		C._xmlFreeNode(node.ptr)
 		node.ptr = nil
@@ -100,35 +105,35 @@ func (node xmlNodePtr) Free() {
 	}
 }
 
-func (doc xmlDocPtr) AddChild(name string, content string) Node {
+func (doc *xmlDocPtr) AddChild(name string, content string) Node {
 	cname := C.CString(name)
 	ccontent := C.CString(content)
 	cnode := C._xmlAddDocChild(doc.ptr, cname, ccontent)
 	C.free(unsafe.Pointer(cname))
 	C.free(unsafe.Pointer(ccontent))
-	return xmlNodePtr{ptr:cnode}
+	return &xmlNodePtr{ptr: cnode}
 }
 
-func (doc xmlDocPtr) GetRootElement() Node {
+func (doc *xmlDocPtr) GetRootElement() Node {
 	cnode := C._xmlDocGetRootElement(doc.ptr)
-	return xmlNodePtr{ptr:cnode}
+	return &xmlNodePtr{ptr: cnode}
 }
 
-func (doc xmlDocPtr) Dump() Buffer {
+func (doc *xmlDocPtr) Dump() Buffer {
 	cbuf := C._xmlDocDump(doc.ptr)
-	buf := xmlBufferPtr{ptr:cbuf}
+	buf := &xmlBufferPtr{ptr: cbuf}
 	return buf
 }
 
-func (doc xmlDocPtr) String() string {
+func (doc *xmlDocPtr) String() string {
 	buf := doc.Dump()
 	str := buf.String()
 	buf.Free()
 	return str
 }
 
-func (buf xmlBufferPtr) Free() {
-	if unsafe.Pointer(buf.ptr) != nil {
+func (buf *xmlBufferPtr) Free() {
+	if buf.ptr != nil {
 		C._xmlBufferFree(buf.ptr)
 		buf.ptr = nil
 	} else {
@@ -136,9 +141,8 @@ func (buf xmlBufferPtr) Free() {
 	}
 }
 
-func (buf xmlBufferPtr) String() string {
+func (buf *xmlBufferPtr) String() string {
 	cstr := C._xmlBufferContent(buf.ptr)
 	str := C.GoString(cstr)
 	return str
 }
-

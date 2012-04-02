@@ -5,4 +5,3 @@ type Buffer interface {
 	String() string
 	Free()
 }
-
