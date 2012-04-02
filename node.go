@@ -7,4 +7,5 @@ type Node interface {
 	String() string
 	Path() string
 	AddChild(name string, content string) Node
+	Children() chan Node
 }

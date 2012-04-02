@@ -4,15 +4,18 @@ package libxml
 #include <stdio.h>
 #include <libxml/tree.h>
 
-xmlDocPtr _xmlNewDoc(char *version)   { return xmlNewDoc((xmlChar *)version); }
+xmlDocPtr  _xmlNewDoc(char *version) { return xmlNewDoc((xmlChar *)version); }
 xmlNodePtr _xmlDocGetRootElement(xmlDocPtr doc)   { return xmlDocGetRootElement(doc); }
-void _xmlFree(void *obj)       { xmlFree(obj); }
-void _xmlFreeDoc(xmlDocPtr doc)       { xmlFreeDoc(doc); }
-void _xmlFreeNode(xmlNodePtr node)       { xmlFreeNode(node); }
-void _xmlUnlinkNode(xmlNodePtr node)       { xmlUnlinkNode(node); }
-void _xmlBufferFree(xmlBufferPtr buf)    { xmlBufferFree(buf); }
-char *_xmlBufferContent(xmlBufferPtr buf) { return (char *)xmlBufferContent(buf); }
-char *_xmlGetNodePath(xmlNodePtr node) { return (char *)xmlGetNodePath(node); }
+void       _xmlFree(void *obj) { xmlFree(obj); }
+void       _xmlFreeDoc(xmlDocPtr doc) { xmlFreeDoc(doc); }
+void       _xmlFreeNode(xmlNodePtr node) { xmlFreeNode(node); }
+void       _xmlUnlinkNode(xmlNodePtr node) { xmlUnlinkNode(node); }
+void       _xmlBufferFree(xmlBufferPtr buf) { xmlBufferFree(buf); }
+char       *_xmlBufferContent(xmlBufferPtr buf) { return (char *)xmlBufferContent(buf); }
+char       *_xmlGetNodePath(xmlNodePtr node) { return (char *)xmlGetNodePath(node); }
+xmlNodePtr _xmlNextElementSibling(xmlNodePtr node) { return xmlNextElementSibling(node); }
+xmlNodePtr _xmlDocToNode(xmlDocPtr doc) { return (xmlNodePtr)doc; }
+xmlNodePtr _xmlFirstElementChild(xmlNodePtr node) { return xmlFirstElementChild(node); }
 
 xmlBufferPtr _xmlDocDump(xmlDocPtr doc) {
 	xmlBufferPtr buf = xmlBufferCreate();
@@ -104,6 +107,22 @@ func (node *xmlNodePtr) Path() string {
 	return str
 }
 
+func (node *xmlNodePtr) Children() chan Node {
+	cnode := C._xmlFirstElementChild(node.ptr)
+	c := make(chan Node)
+	go func(c chan Node, cnode C.xmlNodePtr) {
+		for {
+			c <- &xmlNodePtr{ptr:cnode}
+			cnode = C._xmlNextElementSibling(cnode)
+			if cnode == nil {
+				close(c)
+				return
+			}
+		}
+	}(c, cnode)
+	return c
+}
+
 func (node *xmlNodePtr) Free() {
 	if node.ptr != nil {
 		C._xmlUnlinkNode(node.ptr)
@@ -134,6 +153,10 @@ func (doc *xmlDocPtr) Dump() Buffer {
 	return buf
 }
 
+func (doc *xmlDocPtr) Children() chan Node {
+	return doc.Node().Children()
+}
+
 func (doc *xmlDocPtr) String() string {
 	buf := doc.Dump()
 	str := buf.String()
@@ -141,8 +164,13 @@ func (doc *xmlDocPtr) String() string {
 	return str
 }
 
+func (doc *xmlDocPtr) Node() Node {
+	cnode := C._xmlDocToNode(doc.ptr)
+	return &xmlNodePtr{ptr:cnode}
+}
+
 func (doc *xmlDocPtr) Path() string {
-	return doc.GetRootElement().Path()
+	return doc.Node().Path()
 }
 
 func (buf *xmlBufferPtr) Free() {

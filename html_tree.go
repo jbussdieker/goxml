@@ -4,6 +4,8 @@ package libxml
 #include <stdio.h>
 #include <libxml/HTMLtree.h>
 
+xmlNodePtr _htmlDocToNode(htmlDocPtr doc) { return (xmlNodePtr)doc; }
+
 htmlDocPtr _htmlNewDoc(char *uri, char *external_id) {
 	return htmlNewDoc((xmlChar *)uri, (xmlChar *)external_id);
 }
@@ -51,7 +53,16 @@ func (doc *htmlDocPtr) GetRootElement() Node {
 }
 
 func (doc *htmlDocPtr) Path() string {
-	return doc.GetRootElement().Path()
+	return doc.Node().Path()
+}
+
+func (doc *htmlDocPtr) Node() Node {
+	cnode := C._htmlDocToNode(doc.ptr)
+	return &xmlNodePtr{ptr:cnode}
+}
+
+func (doc *htmlDocPtr) Children() chan Node {
+	return doc.Node().Children()
 }
 
 func (doc *htmlDocPtr) String() string {
