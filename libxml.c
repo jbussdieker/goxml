@@ -10,11 +10,13 @@
 
 unsigned long alloc_count = 0;
 
+#ifndef strdup
 char *strdup (const char *str) {
 	char *new = malloc(strlen(str));
 	strcpy(new, str);
 	return new;
 }
+#endif
 
 #ifdef CUSTOM_GC
 #pragma pack(push)
@@ -28,6 +30,9 @@ typedef struct go_xml_allocation {
 #endif
 
 unsigned long goXmlAllocSize() {
+	if (alloc_count > 0) {
+		xmlCleanupParser();
+	}
 	return alloc_count;
 }
 
@@ -79,12 +84,14 @@ void *goXmlStrDup(void *p) {
 
 void goXmlInit() {
 	//fprintf(stderr, "Running xmlMemSetup()...\n");
-	//xmlMemSetup(
-		//(xmlFreeFunc)goXmlFree, 
-		//(xmlMallocFunc)goXmlMalloc, 
-		//(xmlReallocFunc)goXmlRealloc,
-      	//(xmlStrdupFunc)goXmlStrDup
-	//);
+#ifndef WINDOWS
+	xmlMemSetup(
+		(xmlFreeFunc)goXmlFree, 
+		(xmlMallocFunc)goXmlMalloc, 
+		(xmlReallocFunc)goXmlRealloc,
+      	(xmlStrdupFunc)goXmlStrDup
+	);
+#endif
 
 	//char *_LIBXML_VERSION = strdup(LIBXML_DOTTED_VERSION);
 	//char *_LIBXML_PARSER_VERSION = strdup(xmlParserVersion);
