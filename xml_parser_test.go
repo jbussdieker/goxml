@@ -3,13 +3,15 @@ package libxml
 import "testing"
 import "strings"
 
-func TestXmlParseDoc(t *testing.T) {
-	doc := parseXmlDoc(t, "<html></html>")
-	doc.Free()
-	checkMemory(t)
+func parseXmlDoc(t *testing.T, buf string) Document {
+	doc := XmlParseDoc(buf)
+	if doc == nil {
+		t.Fatal("HtmlParseDoc returned nil")
+	}
+	return doc
 }
 
-func TestXmlParseDocString(t *testing.T) {
+func TestXmlParseDoc(t *testing.T) {
 	doc := parseXmlDoc(t, "<html></html>")
 	buf := doc.Dump()
 	if strings.TrimSpace(buf.String()) != "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<html/>" {
@@ -20,3 +22,4 @@ func TestXmlParseDocString(t *testing.T) {
 	doc.Free()
 	checkMemory(t)
 }
+

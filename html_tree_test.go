@@ -3,13 +3,15 @@ package libxml
 import "testing"
 import "strings"
 
-func TestHtmlNewDoc(t *testing.T) {
-	doc := blankHtmlDoc(t)
-	doc.Free()
-	checkMemory(t)
+func blankHtmlDoc(t *testing.T) Document {
+	doc := HtmlNewDoc("", "")
+	if doc == nil {
+		t.Fatal("HtmlNewDoc returned nil")
+	}
+	return doc
 }
 
-func TestHtmlDocString(t *testing.T) {
+func TestHtmlNewDoc(t *testing.T) {
 	doc := blankHtmlDoc(t)
 	buf := doc.Dump()
 	if strings.TrimSpace(buf.String()) != "<!DOCTYPE html PUBLIC \"\" \"\">" {
