@@ -16,6 +16,8 @@ char       *_xmlGetNodePath(xmlNodePtr node) { return (char *)xmlGetNodePath(nod
 xmlNodePtr _xmlNextElementSibling(xmlNodePtr node) { return xmlNextElementSibling(node); }
 xmlNodePtr _xmlDocToNode(xmlDocPtr doc) { return (xmlNodePtr)doc; }
 xmlNodePtr _xmlFirstElementChild(xmlNodePtr node) { return xmlFirstElementChild(node); }
+char       *_xmlGetNodeName(xmlNodePtr node) { return (char *)node->name; }
+xmlElementType _xmlGetNodeType(xmlNodePtr node) { return node->type; }
 
 xmlBufferPtr _xmlDocDump(xmlDocPtr doc) {
 	xmlBufferPtr buf = xmlBufferCreate();
@@ -45,6 +47,30 @@ xmlNodePtr _xmlAddNodeChild(xmlNodePtr node, char *name, char *content) {
 */
 import "C"
 import "unsafe"
+
+const (
+    XML_ELEMENT_NODE = C.XML_ELEMENT_NODE
+    XML_ATTRIBUTE_NODE = iota
+    XML_TEXT_NODE
+    XML_CDATA_SECTION_NODE
+    XML_ENTITY_REF_NODE
+    XML_ENTITY_NODE
+    XML_PI_NODE
+    XML_COMMENT_NODE
+    XML_DOCUMENT_NODE
+    XML_DOCUMENT_TYPE_NODE
+    XML_DOCUMENT_FRAG_NODE
+    XML_NOTATION_NODE
+    XML_HTML_DOCUMENT_NODE
+    XML_DTD_NODE
+    XML_ELEMENT_DECL
+    XML_ATTRIBUTE_DECL
+    XML_ENTITY_DECL
+    XML_NAMESPACE_DECL
+    XML_XINCLUDE_START
+    XML_XINCLUDE_END
+    XML_DOCB_DOCUMENT_NODE
+)
 
 type xmlDocPtr struct {
 	ptr C.xmlDocPtr
@@ -100,6 +126,16 @@ func (node *xmlNodePtr) String() string {
 	return str
 }
 
+func (node *xmlNodePtr) Name() string {
+	cstr := C._xmlGetNodeName(node.ptr)
+	str := C.GoString(cstr)
+	return str
+}
+
+func (node *xmlNodePtr) Type() int {
+	return int(C._xmlGetNodeType(node.ptr))
+}
+
 func (node *xmlNodePtr) Path() string {
 	cpath := C._xmlGetNodePath(node.ptr)
 	str := C.GoString(cpath)
@@ -111,14 +147,11 @@ func (node *xmlNodePtr) Children() chan Node {
 	cnode := C._xmlFirstElementChild(node.ptr)
 	c := make(chan Node)
 	go func(c chan Node, cnode C.xmlNodePtr) {
-		for {
+		for cnode != nil {
 			c <- &xmlNodePtr{ptr:cnode}
 			cnode = C._xmlNextElementSibling(cnode)
-			if cnode == nil {
-				close(c)
-				return
-			}
 		}
+		close(c)
 	}(c, cnode)
 	return c
 }
@@ -171,6 +204,14 @@ func (doc *xmlDocPtr) Node() Node {
 
 func (doc *xmlDocPtr) Path() string {
 	return doc.Node().Path()
+}
+
+func (doc *xmlDocPtr) Name() string {
+	return doc.Node().Name()
+}
+
+func (doc *xmlDocPtr) Type() int {
+	return doc.Node().Type()
 }
 
 func (buf *xmlBufferPtr) Free() {

@@ -56,6 +56,14 @@ func (doc *htmlDocPtr) Path() string {
 	return doc.Node().Path()
 }
 
+func (doc *htmlDocPtr) Name() string {
+	return doc.Node().Name()
+}
+
+func (doc *htmlDocPtr) Type() int {
+	return doc.Node().Type()
+}
+
 func (doc *htmlDocPtr) Node() Node {
 	cnode := C._htmlDocToNode(doc.ptr)
 	return &xmlNodePtr{ptr:cnode}
