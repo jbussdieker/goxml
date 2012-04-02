@@ -20,7 +20,8 @@ type htmlDocPtr struct {
 	ptr C.htmlDocPtr
 }
 
-func HtmlNewDoc(uri string, external_id string) Document {
+// Create a new blank HTML Document
+func NewHtmlDoc(uri string, external_id string) Document {
 	curi := C.CString(uri)
 	cexternal_id := C.CString(external_id)
 	cdoc := C._htmlNewDoc(curi, cexternal_id)
@@ -31,6 +32,7 @@ func HtmlNewDoc(uri string, external_id string) Document {
 }
 
 func (doc htmlDocPtr) AddChild(name string, content string) Node {
+	// Implemented in xmlDoc
 	xmldoc := xmlDocPtr{ptr:_Ctype_xmlDocPtr(doc.ptr)}
 	return xmldoc.AddChild(name, content)
 }
@@ -41,6 +43,12 @@ func (doc htmlDocPtr) Dump() Buffer {
 	return buf
 }
 
+func (doc htmlDocPtr) GetRootElement() Node {
+	// Implemented in xmlDoc
+	xmldoc := xmlDocPtr{ptr:_Ctype_xmlDocPtr(doc.ptr)}
+	return xmldoc.GetRootElement()
+}
+
 func (doc htmlDocPtr) String() string {
 	buf := doc.Dump()
 	str := buf.String()
@@ -49,6 +57,7 @@ func (doc htmlDocPtr) String() string {
 }
 
 func (doc htmlDocPtr) Free() {
+	// Implemented in xmlDoc
 	if unsafe.Pointer(doc.ptr) != nil {
 		xmldoc := xmlDocPtr{ptr:_Ctype_xmlDocPtr(doc.ptr)}
 		xmldoc.Free()

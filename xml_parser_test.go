@@ -1,10 +1,9 @@
 package libxml
 
 import "testing"
-import "strings"
 
 func parseXmlDoc(t *testing.T, buf string) Document {
-	doc := XmlParseDoc(buf)
+	doc := NewXmlFromString(buf)
 	if doc == nil {
 		t.Fatal("HtmlParseDoc returned nil")
 	}
@@ -13,11 +12,7 @@ func parseXmlDoc(t *testing.T, buf string) Document {
 
 func TestXmlParseDoc(t *testing.T) {
 	doc := parseXmlDoc(t, "<html></html>")
-	str := strings.TrimSpace(doc.String())
-	if str != "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<html/>" {
-		t.Fatal(str)
-		t.Fail()
-	}
+	expectString(t, doc, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<html/>")
 	doc.Free()
 	checkMemory(t)
 }

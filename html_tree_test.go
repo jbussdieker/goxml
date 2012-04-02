@@ -1,22 +1,18 @@
 package libxml
 
 import "testing"
-import "strings"
 
 func blankHtmlDoc(t *testing.T) Document {
-	doc := HtmlNewDoc("", "")
+	doc := NewHtmlDoc("", "")
 	if doc == nil {
 		t.Fatal("HtmlNewDoc returned nil")
 	}
 	return doc
 }
 
-func TestHtmlNewDoc(t *testing.T) {
+func TestNewHtmlDoc(t *testing.T) {
 	doc := blankHtmlDoc(t)
-	str := strings.TrimSpace(doc.String())
-	if str != "<!DOCTYPE html PUBLIC \"\" \"\">" {
-		t.Fail()
-	}
+	expectString(t, doc, "<!DOCTYPE html PUBLIC \"\" \"\">")
 	doc.Free()
 	checkMemory(t)
 }
@@ -24,10 +20,25 @@ func TestHtmlNewDoc(t *testing.T) {
 func TestHtmlDocAddChild(t *testing.T) {
 	doc := blankHtmlDoc(t)
 	doc.AddChild("html", "")
-	str := strings.TrimSpace(doc.String())
-	if str != "<!DOCTYPE html PUBLIC \"\" \"\">\n<html></html>" {
-		t.Fail()
-	}
+	expectString(t, doc, "<!DOCTYPE html PUBLIC \"\" \"\">\n<html></html>")
 	doc.Free()
 	checkMemory(t)
 }
+
+func TestHtmlNodeAddChild(t *testing.T) {
+	doc := blankHtmlDoc(t)
+	doc.AddChild("html", "").AddChild("body", "")
+	expectString(t, doc, "<!DOCTYPE html PUBLIC \"\" \"\">\n<html><body></body>\n</html>")
+	doc.Free()
+	checkMemory(t)
+}
+
+func TestHtmlNodeString(t *testing.T) {
+	doc := blankHtmlDoc(t)
+	html := doc.AddChild("html", "")
+	html.AddChild("body", "")
+	expectString(t, html, "<html><body></body></html>")
+	doc.Free()
+	checkMemory(t)
+}
+

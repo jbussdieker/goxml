@@ -14,7 +14,8 @@ xmlDocPtr _xmlReadMemory(char *buffer) {
 import "C"
 import "unsafe"
 
-func XmlParseDoc(buf string) Document {
+// Parses the input string and returns an XML Document
+func NewXmlFromString(buf string) Document {
 	cbuf := C.CString(buf)
 	cdoc := C._xmlReadMemory(cbuf)
 	C.free(unsafe.Pointer(cbuf))

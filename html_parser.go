@@ -14,7 +14,8 @@ htmlDocPtr _htmlReadMemory(char *buffer) {
 import "C"
 import "unsafe"
 
-func HtmlParseDoc(buf string) Document {
+// Parses the input string and returns an HTML Document
+func NewHtmlFromString(buf string) Document {
 	cbuf := C.CString(buf)
 	cdoc := C._htmlReadMemory(cbuf)
 	C.free(unsafe.Pointer(cbuf))

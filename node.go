@@ -1,5 +1,6 @@
 package libxml
 
+// Generic Node interface
 type Node interface {
 	Free()
 	Dump() Buffer

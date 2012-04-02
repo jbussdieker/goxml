@@ -1,22 +1,18 @@
 package libxml
 
 import "testing"
-import "strings"
 
 func blankXmlDoc(t *testing.T) Document {
-	doc := XmlNewDoc("1.0")
+	doc := NewXmlDoc("1.0")
 	if doc == nil {
 		t.Fatal("XmlNewDoc returned nil")
 	}
 	return doc
 }
 
-func TestXmlNewDoc(t *testing.T) {
+func TestNewXmlDoc(t *testing.T) {
 	doc := blankXmlDoc(t)
-	str := strings.TrimSpace(doc.String())
-	if str != "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" {
-		t.Fail()
-	}
+	expectString(t, doc, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
 	doc.Free()
 	checkMemory(t)
 }
@@ -24,10 +20,24 @@ func TestXmlNewDoc(t *testing.T) {
 func TestXmlDocAddChild(t *testing.T) {
 	doc := blankXmlDoc(t)
 	doc.AddChild("html", "")
-	str := strings.TrimSpace(doc.String())
-	if str != "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<html></html>" {
-		t.Fail()
-	}
+	expectString(t, doc, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<html></html>")
+	doc.Free()
+	checkMemory(t)
+}
+
+func TestXmlNodeAddChild(t *testing.T) {
+	doc := blankXmlDoc(t)
+	doc.AddChild("html", "").AddChild("body", "")
+	expectString(t, doc, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<html><body></body></html>")
+	doc.Free()
+	checkMemory(t)
+}
+
+func TestXmlNodeString(t *testing.T) {
+	doc := blankXmlDoc(t)
+	html := doc.AddChild("html", "")
+	html.AddChild("body", "")
+	expectString(t, html, "<html><body></body></html>")
 	doc.Free()
 	checkMemory(t)
 }

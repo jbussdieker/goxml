@@ -1,6 +1,7 @@
 package libxml
 
 import "testing"
+import "strings"
 import "fmt"
 
 func init() {
@@ -8,8 +9,19 @@ func init() {
 }
 
 func checkMemory(t *testing.T) {
-	if AllocSize() != 0 {
-		t.Fatal(AllocSize(), "remaining unfreed objects")
+	if MemAllocSize() != 0 {
+		t.Fatal(MemAllocSize(), "remaining unfreed objects")
 	}
 }
 
+func expectString(t *testing.T, node Node, expected string) {
+	str := strings.TrimSpace(node.String())
+	if str != expected {
+		fmt.Println("**GOT*******************************")
+		fmt.Println(str)
+		fmt.Println("**EXPECTED**************************")
+		fmt.Println(expected)
+		fmt.Println("************************************")
+		t.Fail()
+	}
+}
