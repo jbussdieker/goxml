@@ -1,0 +1,52 @@
+package libxml
+/*
+#include <stdio.h>
+#include <libxml/HTMLtree.h>
+
+htmlDocPtr _htmlNewDoc(char *uri, char *external_id) {
+	return htmlNewDoc((xmlChar *)uri, (xmlChar *)external_id);
+}
+
+xmlBufferPtr _htmlDocDump(htmlDocPtr doc) {
+	xmlBufferPtr buf = xmlBufferCreate();
+	htmlNodeDump(buf, NULL, (xmlNodePtr)doc);
+	return buf;
+}
+*/
+import "C"
+import "unsafe"
+
+type htmlDocPtr struct {
+	ptr C.htmlDocPtr
+}
+
+func HtmlNewDoc(uri string, external_id string) Document {
+	curi := C.CString(uri)
+	cexternal_id := C.CString(external_id)
+	cdoc := C._htmlNewDoc(curi, cexternal_id)
+	C.free(unsafe.Pointer(curi))
+	C.free(unsafe.Pointer(cexternal_id))
+	doc := htmlDocPtr{ptr:cdoc}
+	return doc
+}
+
+func (doc htmlDocPtr) AddChild(name string, content string) Node {
+	xmldoc := xmlDocPtr{ptr:_Ctype_xmlDocPtr(doc.ptr)}
+	return xmldoc.AddChild(name, content)
+}
+
+func (doc htmlDocPtr) Dump() Buffer {
+	cbuf := C._htmlDocDump(doc.ptr)
+	buf := xmlBufferPtr{ptr:cbuf}
+	return buf
+}
+
+func (doc htmlDocPtr) Free() {
+	if unsafe.Pointer(doc.ptr) != nil {
+		xmldoc := xmlDocPtr{ptr:_Ctype_xmlDocPtr(doc.ptr)}
+		xmldoc.Free()
+	} else {
+		panic("Document already freed")
+	}
+}
+

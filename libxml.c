@@ -3,12 +3,12 @@
 #include <string.h>
 #include <time.h>
 
-#include "_cgo_export.h"
+#include <libxml/xmlmemory.h>
 
 //#define TRACE_MEM
 //#define CUSTOM_GC
 
-long alloc_count = 0;
+unsigned long alloc_count = 0;
 
 #pragma pack(push)
 #pragma pack(1)
@@ -20,6 +20,7 @@ typedef struct go_xml_allocation {
 #pragma pack(pop)
 
 unsigned long goXmlAllocSize() {
+	xmlCleanupParser();
 	return alloc_count;
 }
 
@@ -67,4 +68,27 @@ void *goXmlStrDup(void *p) {
 	fprintf(stderr, "%08lu StrDup %p\n", alloc_count, p);
 #endif
 	return strdup(p);
+}
+
+void goXmlInit() {
+	//fprintf(stderr, "Running xmlMemSetup()...\n");
+	xmlMemSetup(
+		(xmlFreeFunc)goXmlFree, 
+		(xmlMallocFunc)goXmlMalloc, 
+		(xmlReallocFunc)goXmlRealloc,
+      	(xmlStrdupFunc)goXmlStrDup
+	);
+
+	//char *_LIBXML_VERSION = strdup(LIBXML_DOTTED_VERSION);
+	//char *_LIBXML_PARSER_VERSION = strdup(xmlParserVersion);
+	//fprintf(stderr, "LIBXML_VERSION: %s\n", _LIBXML_VERSION);
+	//fprintf(stderr, "LIBXML_PARSER_VERSION: %s\n", _LIBXML_PARSER_VERSION);
+
+#ifdef LIBXML_ICONV_ENABLED
+	//fprintf(stderr, "LIBXML_ICONV_ENABLED: %s\n", "true");
+#else
+	//fprintf(stderr, "LIBXML_ICONV_ENABLED: %s\n", "false");
+#endif
+
+	//xmlInitParser();
 }
