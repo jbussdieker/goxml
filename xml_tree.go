@@ -49,27 +49,27 @@ import "C"
 import "unsafe"
 
 const (
-    XML_ELEMENT_NODE = C.XML_ELEMENT_NODE
-    XML_ATTRIBUTE_NODE = iota
-    XML_TEXT_NODE
-    XML_CDATA_SECTION_NODE
-    XML_ENTITY_REF_NODE
-    XML_ENTITY_NODE
-    XML_PI_NODE
-    XML_COMMENT_NODE
-    XML_DOCUMENT_NODE
-    XML_DOCUMENT_TYPE_NODE
-    XML_DOCUMENT_FRAG_NODE
-    XML_NOTATION_NODE
-    XML_HTML_DOCUMENT_NODE
-    XML_DTD_NODE
-    XML_ELEMENT_DECL
-    XML_ATTRIBUTE_DECL
-    XML_ENTITY_DECL
-    XML_NAMESPACE_DECL
-    XML_XINCLUDE_START
-    XML_XINCLUDE_END
-    XML_DOCB_DOCUMENT_NODE
+	XML_ELEMENT_NODE   = C.XML_ELEMENT_NODE
+	XML_ATTRIBUTE_NODE = iota
+	XML_TEXT_NODE
+	XML_CDATA_SECTION_NODE
+	XML_ENTITY_REF_NODE
+	XML_ENTITY_NODE
+	XML_PI_NODE
+	XML_COMMENT_NODE
+	XML_DOCUMENT_NODE
+	XML_DOCUMENT_TYPE_NODE
+	XML_DOCUMENT_FRAG_NODE
+	XML_NOTATION_NODE
+	XML_HTML_DOCUMENT_NODE
+	XML_DTD_NODE
+	XML_ELEMENT_DECL
+	XML_ATTRIBUTE_DECL
+	XML_ENTITY_DECL
+	XML_NAMESPACE_DECL
+	XML_XINCLUDE_START
+	XML_XINCLUDE_END
+	XML_DOCB_DOCUMENT_NODE
 )
 
 type xmlDocPtr struct {
@@ -148,7 +148,7 @@ func (node *xmlNodePtr) Children() chan Node {
 	c := make(chan Node)
 	go func(c chan Node, cnode C.xmlNodePtr) {
 		for cnode != nil {
-			c <- &xmlNodePtr{ptr:cnode}
+			c <- &xmlNodePtr{ptr: cnode}
 			cnode = C._xmlNextElementSibling(cnode)
 		}
 		close(c)
@@ -199,7 +199,7 @@ func (doc *xmlDocPtr) String() string {
 
 func (doc *xmlDocPtr) Node() Node {
 	cnode := C._xmlDocToNode(doc.ptr)
-	return &xmlNodePtr{ptr:cnode}
+	return &xmlNodePtr{ptr: cnode}
 }
 
 func (doc *xmlDocPtr) Path() string {

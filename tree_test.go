@@ -9,7 +9,7 @@ func recurseTree(depth int, node Node) (found bool) {
 		found = true
 		fmt.Println(strings.Repeat("  ", depth), n.Name())
 		if recurseTree(depth+1, n) {
-			fmt.Println(strings.Repeat("  ", depth), "/" + n.Name())
+			fmt.Println(strings.Repeat("  ", depth), "/"+n.Name())
 		}
 	}
 	return

@@ -66,7 +66,7 @@ func (doc *htmlDocPtr) Type() int {
 
 func (doc *htmlDocPtr) Node() Node {
 	cnode := C._htmlDocToNode(doc.ptr)
-	return &xmlNodePtr{ptr:cnode}
+	return &xmlNodePtr{ptr: cnode}
 }
 
 func (doc *htmlDocPtr) Children() chan Node {
