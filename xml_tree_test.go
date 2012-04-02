@@ -25,6 +25,15 @@ func TestXmlDocAddChild(t *testing.T) {
 	checkMemory(t)
 }
 
+func TestXmlDocGetRootElement(t *testing.T) {
+	doc := blankXmlDoc(t)
+	doc.AddChild("html", "")
+	root := doc.GetRootElement()
+	expectString(t, root, "<html></html>")
+	doc.Free()
+	checkMemory(t)
+}
+
 func TestXmlNodeAddChild(t *testing.T) {
 	doc := blankXmlDoc(t)
 	doc.AddChild("html", "").AddChild("body", "")
