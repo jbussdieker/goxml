@@ -3,8 +3,8 @@
 package libxml
 
 /*
-#cgo pkg-config: libxml-2.0
-#cgo LDFLAGS: -lrt
+#cgo CFLAGS: -I/tmp/trinitybuild/include/libxml2
+#cgo LDFLAGS: -lxml2
 #include <libxml/xmlversion.h>
 #include <libxml/parser.h>
 void goXmlInit();
@@ -16,7 +16,7 @@ import "C"
 var LIBXML_VERSION = C.LIBXML_DOTTED_VERSION
 
 // This is the version of libxml that is actually being linked against.
-var LIBXML_PARSER_VERSION = C.GoString(C.xmlParserVersion)
+var LIBXML_PARSER_VERSION = C.LIBXML_DOTTED_VERSION
 
 func init() {
 	C.goXmlInit()
