@@ -14,8 +14,8 @@ func checkMemory(t *testing.T) {
 	}
 }
 
-func expectString(t *testing.T, node Node, expected string) {
-	str := strings.TrimSpace(node.String())
+func expectString(t *testing.T, str string, expected string) {
+	str = strings.TrimSpace(str)
 	if str != expected {
 		fmt.Println("**GOT*******************************")
 		fmt.Println(str)

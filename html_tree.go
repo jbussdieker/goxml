@@ -50,6 +50,10 @@ func (doc *htmlDocPtr) GetRootElement() Node {
 	return xmldoc.GetRootElement()
 }
 
+func (doc *htmlDocPtr) Path() string {
+	return doc.GetRootElement().Path()
+}
+
 func (doc *htmlDocPtr) String() string {
 	buf := doc.Dump()
 	str := buf.String()

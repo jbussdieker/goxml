@@ -12,7 +12,7 @@ func parseXmlDoc(t *testing.T, buf string) Document {
 
 func TestXmlParseDoc(t *testing.T) {
 	doc := parseXmlDoc(t, "<html></html>")
-	expectString(t, doc, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<html/>")
+	expectString(t, doc.String(), "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<html/>")
 	doc.Free()
 	checkMemory(t)
 }

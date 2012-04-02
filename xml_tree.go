@@ -6,11 +6,13 @@ package libxml
 
 xmlDocPtr _xmlNewDoc(char *version)   { return xmlNewDoc((xmlChar *)version); }
 xmlNodePtr _xmlDocGetRootElement(xmlDocPtr doc)   { return xmlDocGetRootElement(doc); }
+void _xmlFree(void *obj)       { xmlFree(obj); }
 void _xmlFreeDoc(xmlDocPtr doc)       { xmlFreeDoc(doc); }
 void _xmlFreeNode(xmlNodePtr node)       { xmlFreeNode(node); }
 void _xmlUnlinkNode(xmlNodePtr node)       { xmlUnlinkNode(node); }
 void _xmlBufferFree(xmlBufferPtr buf)    { xmlBufferFree(buf); }
 char *_xmlBufferContent(xmlBufferPtr buf) { return (char *)xmlBufferContent(buf); }
+char *_xmlGetNodePath(xmlNodePtr node) { return (char *)xmlGetNodePath(node); }
 
 xmlBufferPtr _xmlDocDump(xmlDocPtr doc) {
 	xmlBufferPtr buf = xmlBufferCreate();
@@ -95,6 +97,13 @@ func (node *xmlNodePtr) String() string {
 	return str
 }
 
+func (node *xmlNodePtr) Path() string {
+	cpath := C._xmlGetNodePath(node.ptr)
+	str := C.GoString(cpath)
+	C._xmlFree(unsafe.Pointer(cpath))
+	return str
+}
+
 func (node *xmlNodePtr) Free() {
 	if node.ptr != nil {
 		C._xmlUnlinkNode(node.ptr)
@@ -130,6 +139,10 @@ func (doc *xmlDocPtr) String() string {
 	str := buf.String()
 	buf.Free()
 	return str
+}
+
+func (doc *xmlDocPtr) Path() string {
+	return doc.GetRootElement().Path()
 }
 
 func (buf *xmlBufferPtr) Free() {

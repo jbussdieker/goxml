@@ -12,7 +12,7 @@ func blankHtmlDoc(t *testing.T) Document {
 
 func TestNewHtmlDoc(t *testing.T) {
 	doc := blankHtmlDoc(t)
-	expectString(t, doc, "<!DOCTYPE html PUBLIC \"\" \"\">")
+	expectString(t, doc.String(), "<!DOCTYPE html PUBLIC \"\" \"\">")
 	doc.Free()
 	checkMemory(t)
 }
@@ -20,7 +20,7 @@ func TestNewHtmlDoc(t *testing.T) {
 func TestHtmlDocAddChild(t *testing.T) {
 	doc := blankHtmlDoc(t)
 	doc.AddChild("html", "")
-	expectString(t, doc, "<!DOCTYPE html PUBLIC \"\" \"\">\n<html></html>")
+	expectString(t, doc.String(), "<!DOCTYPE html PUBLIC \"\" \"\">\n<html></html>")
 	doc.Free()
 	checkMemory(t)
 }
@@ -29,7 +29,7 @@ func TestHtmlDocGetRootElement(t *testing.T) {
 	doc := blankHtmlDoc(t)
 	doc.AddChild("html", "")
 	root := doc.GetRootElement()
-	expectString(t, root, "<html></html>")
+	expectString(t, root.String(), "<html></html>")
 	doc.Free()
 	checkMemory(t)
 }
@@ -37,7 +37,7 @@ func TestHtmlDocGetRootElement(t *testing.T) {
 func TestHtmlNodeAddChild(t *testing.T) {
 	doc := blankHtmlDoc(t)
 	doc.AddChild("html", "").AddChild("body", "")
-	expectString(t, doc, "<!DOCTYPE html PUBLIC \"\" \"\">\n<html><body></body>\n</html>")
+	expectString(t, doc.String(), "<!DOCTYPE html PUBLIC \"\" \"\">\n<html><body></body>\n</html>")
 	doc.Free()
 	checkMemory(t)
 }
@@ -46,7 +46,7 @@ func TestHtmlNodeString(t *testing.T) {
 	doc := blankHtmlDoc(t)
 	html := doc.AddChild("html", "")
 	html.AddChild("body", "")
-	expectString(t, html, "<html><body></body></html>")
+	expectString(t, html.String(), "<html><body></body></html>")
 	doc.Free()
 	checkMemory(t)
 }
