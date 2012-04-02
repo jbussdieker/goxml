@@ -10,4 +10,10 @@ type Node interface {
 	Path() string
 	AddChild(name string, content string) Node
 	Children() chan Node
+	Attributes() chan Attribute
+}
+
+type Attribute interface {
+	String() string
+	Name() string
 }

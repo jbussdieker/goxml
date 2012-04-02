@@ -20,3 +20,13 @@ func TestTree(t *testing.T) {
 	recurseTree(1, doc)
 	doc.Free()
 }
+
+func TestAttributes(t *testing.T) {
+	doc := NewXmlFromString("<html test=\"yup\" test1=\"yup1\"></html>")
+	recurseTree(1, doc)
+	root := doc.GetRootElement()
+	for attr := range root.Attributes() {
+		println(attr.Name())
+	}
+	doc.Free()
+}

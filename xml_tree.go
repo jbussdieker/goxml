@@ -15,9 +15,12 @@ char       *_xmlBufferContent(xmlBufferPtr buf) { return (char *)xmlBufferConten
 char       *_xmlGetNodePath(xmlNodePtr node) { return (char *)xmlGetNodePath(node); }
 xmlNodePtr _xmlNextElementSibling(xmlNodePtr node) { return xmlNextElementSibling(node); }
 xmlNodePtr _xmlDocToNode(xmlDocPtr doc) { return (xmlNodePtr)doc; }
+xmlNodePtr _xmlAttrToNode(xmlAttrPtr attr) { return (xmlNodePtr)attr; }
 xmlNodePtr _xmlFirstElementChild(xmlNodePtr node) { return xmlFirstElementChild(node); }
 char       *_xmlGetNodeName(xmlNodePtr node) { return (char *)node->name; }
 xmlElementType _xmlGetNodeType(xmlNodePtr node) { return node->type; }
+xmlAttr    *_xmlGetProperties(xmlNodePtr node) { return node->properties; }
+xmlAttr    *_xmlNextAttribute(xmlAttr *attr) { return attr->next; }
 
 xmlBufferPtr _xmlDocDump(xmlDocPtr doc) {
 	xmlBufferPtr buf = xmlBufferCreate();
@@ -80,6 +83,10 @@ type xmlNodePtr struct {
 	ptr C.xmlNodePtr
 }
 
+type xmlAttrPtr struct {
+	ptr C.xmlAttrPtr
+}
+
 type xmlBufferPtr struct {
 	ptr C.xmlBufferPtr
 }
@@ -101,7 +108,18 @@ func (doc *xmlDocPtr) Free() {
 	}
 }
 
-func (doc *xmlDocPtr) Parse(buffer string) {
+func (attr *xmlAttrPtr) Name() string {
+	cnode := C._xmlAttrToNode(attr.ptr)
+	cname := C._xmlGetNodeName(cnode)
+	str := C.GoString(cname)
+	return str
+}
+
+func (attr *xmlAttrPtr) String() string {
+	cnode := C._xmlAttrToNode(attr.ptr)
+	cname := C._xmlGetNodeName(cnode)
+	str := C.GoString(cname)
+	return str
 }
 
 func (node *xmlNodePtr) AddChild(name string, content string) Node {
@@ -156,6 +174,19 @@ func (node *xmlNodePtr) Children() chan Node {
 	return c
 }
 
+func (node *xmlNodePtr) Attributes() chan Attribute {
+	cattr := C._xmlGetProperties(node.ptr)
+	c := make(chan Attribute)
+	go func(c chan Attribute, cattr *C.xmlAttr) {
+		for cattr != nil {
+			c <- &xmlAttrPtr{ptr: cattr}
+			cattr = C._xmlNextAttribute(cattr)
+		}
+		close(c)
+	}(c, cattr)
+	return c
+}
+
 func (node *xmlNodePtr) Free() {
 	if node.ptr != nil {
 		C._xmlUnlinkNode(node.ptr)
@@ -188,6 +219,10 @@ func (doc *xmlDocPtr) Dump() Buffer {
 
 func (doc *xmlDocPtr) Children() chan Node {
 	return doc.Node().Children()
+}
+
+func (doc *xmlDocPtr) Attributes() chan Attribute {
+	return doc.Node().Attributes()
 }
 
 func (doc *xmlDocPtr) String() string {

@@ -73,6 +73,10 @@ func (doc *htmlDocPtr) Children() chan Node {
 	return doc.Node().Children()
 }
 
+func (doc *htmlDocPtr) Attributes() chan Attribute {
+	return doc.Node().Attributes()
+}
+
 func (doc *htmlDocPtr) String() string {
 	buf := doc.Dump()
 	str := buf.String()
