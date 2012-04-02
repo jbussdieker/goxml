@@ -41,6 +41,13 @@ func (doc htmlDocPtr) Dump() Buffer {
 	return buf
 }
 
+func (doc htmlDocPtr) String() string {
+	buf := doc.Dump()
+	str := buf.String()
+	buf.Free()
+	return str
+}
+
 func (doc htmlDocPtr) Free() {
 	if unsafe.Pointer(doc.ptr) != nil {
 		xmldoc := xmlDocPtr{ptr:_Ctype_xmlDocPtr(doc.ptr)}

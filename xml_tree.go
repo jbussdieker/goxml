@@ -61,6 +61,10 @@ func (node xmlNodePtr) Dump() Buffer {
 	return nil
 }
 
+func (node xmlNodePtr) String() string {
+	return ""
+}
+
 func (node xmlNodePtr) Free() {
 	if unsafe.Pointer(node.ptr) != nil {
 		C._xmlUnlinkNode(node.ptr)
@@ -84,6 +88,13 @@ func (doc xmlDocPtr) Dump() Buffer {
 	cbuf := C._xmlDocDump(doc.ptr)
 	buf := xmlBufferPtr{ptr:cbuf}
 	return buf
+}
+
+func (doc xmlDocPtr) String() string {
+	buf := doc.Dump()
+	str := buf.String()
+	buf.Free()
+	return str
 }
 
 func (buf xmlBufferPtr) Free() {

@@ -13,11 +13,10 @@ func blankXmlDoc(t *testing.T) Document {
 
 func TestXmlNewDoc(t *testing.T) {
 	doc := blankXmlDoc(t)
-	buf := doc.Dump()
-	if strings.TrimSpace(buf.String()) != "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" {
+	str := strings.TrimSpace(doc.String())
+	if str != "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" {
 		t.Fail()
 	}
-	buf.Free()
 	doc.Free()
 	checkMemory(t)
 }
@@ -25,11 +24,10 @@ func TestXmlNewDoc(t *testing.T) {
 func TestXmlDocAddChild(t *testing.T) {
 	doc := blankXmlDoc(t)
 	doc.AddChild("html", "")
-	buf := doc.Dump()
-	if strings.TrimSpace(buf.String()) != "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<html></html>" {
+	str := strings.TrimSpace(doc.String())
+	if str != "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<html></html>" {
 		t.Fail()
 	}
-	buf.Free()
 	doc.Free()
 	checkMemory(t)
 }

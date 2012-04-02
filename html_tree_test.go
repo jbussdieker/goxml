@@ -13,11 +13,10 @@ func blankHtmlDoc(t *testing.T) Document {
 
 func TestHtmlNewDoc(t *testing.T) {
 	doc := blankHtmlDoc(t)
-	buf := doc.Dump()
-	if strings.TrimSpace(buf.String()) != "<!DOCTYPE html PUBLIC \"\" \"\">" {
+	str := strings.TrimSpace(doc.String())
+	if str != "<!DOCTYPE html PUBLIC \"\" \"\">" {
 		t.Fail()
 	}
-	buf.Free()
 	doc.Free()
 	checkMemory(t)
 }
@@ -25,11 +24,10 @@ func TestHtmlNewDoc(t *testing.T) {
 func TestHtmlDocAddChild(t *testing.T) {
 	doc := blankHtmlDoc(t)
 	doc.AddChild("html", "")
-	buf := doc.Dump()
-	if strings.TrimSpace(buf.String()) != "<!DOCTYPE html PUBLIC \"\" \"\">\n<html></html>" {
+	str := strings.TrimSpace(doc.String())
+	if str != "<!DOCTYPE html PUBLIC \"\" \"\">\n<html></html>" {
 		t.Fail()
 	}
-	buf.Free()
 	doc.Free()
 	checkMemory(t)
 }

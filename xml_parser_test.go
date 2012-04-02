@@ -13,12 +13,11 @@ func parseXmlDoc(t *testing.T, buf string) Document {
 
 func TestXmlParseDoc(t *testing.T) {
 	doc := parseXmlDoc(t, "<html></html>")
-	buf := doc.Dump()
-	if strings.TrimSpace(buf.String()) != "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<html/>" {
-		t.Fatal(buf.String())
+	str := strings.TrimSpace(doc.String())
+	if str != "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<html/>" {
+		t.Fatal(str)
 		t.Fail()
 	}
-	buf.Free()
 	doc.Free()
 	checkMemory(t)
 }
