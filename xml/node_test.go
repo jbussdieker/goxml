@@ -3,18 +3,18 @@ package xml
 import "testing"
 
 func TestNodeString(t *testing.T) {
-	if New("1.0").GetRootElement().String() != "" {
+	if New("1.0").Child().String() != "" {
 		t.Fail()
 	}
 }
 
 func TestNodeAddChild(t *testing.T) {
 	doc := New("1.0")
-	if doc.GetRootElement().String() != "" {
+	if doc.Child().String() != "" {
 		t.Fail()
 	}
 	doc.NewChild("test", "ing")
-	if doc.GetRootElement().String() != "<test>ing</test>" {
+	if doc.Child().String() != "<test>ing</test>" {
 		t.Fail()
 	}
 }

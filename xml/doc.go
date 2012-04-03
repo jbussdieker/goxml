@@ -9,10 +9,11 @@ import "C"
 import "unsafe"
 import . "libxml"
 import . "libxml/element"
+import . "libxml/node"
 
 type Document interface {
 	GetRootElement() Element
-	Element
+	Node
 }
 
 type doc struct {
@@ -51,9 +52,21 @@ func NewFromString(buffer string, url string, encoding string, options XmlParseO
 	return &doc{ptr: XmlReadMemory(buffer, url, encoding, options)}
 }
 
+func (doc *doc) String() string {
+	return XmlNodeDump(doc.ptr)
+}
+
 func (doc *doc) GetRootElement() Element {
 	cnode := XmlDocGetRootElement(doc.ptr)
 	return ElementFromDoc(cnode)
+}
+
+func (doc *doc) GetAttribute(name string) string {
+	return NodeFromDoc(doc.ptr).GetAttribute(name)
+}
+
+func (doc *doc) NewChild(name string, content string) Node {
+	return NodeFromDoc(doc.ptr).NewChild(name, content)
 }
 
 func (doc *doc) Child() Element {
@@ -64,18 +77,8 @@ func (doc *doc) Children() chan Element {
 	return ElementFromDoc(doc.ptr).Children()
 }
 
-func (doc *doc) GetAttribute(name string) string {
-	return ElementFromDoc(doc.ptr).GetAttribute(name)
-}
-
-func (doc *doc) NewChild(name string, content string) Element {
-	return ElementFromDoc(doc.ptr).NewChild(name, content)
-}
-
 func (doc *doc) Name() string {
 	return ElementFromDoc(doc.ptr).Name()
 }
 
-func (doc *doc) String() string {
-	return XmlNodeDump(doc.ptr)
-}
+

@@ -37,8 +37,6 @@ const (
 type Element interface {
 	String() string
 	Name() string
-	GetAttribute(name string) string
-	NewChild(name string, content string) Element
 	Child() Element
 	Children() chan Element
 }
@@ -52,10 +50,8 @@ func ElementFromDoc(doc unsafe.Pointer) Element {
 	return &element{doc: doc, ptr: doc}
 }
 
-func (e *element) NewChild(name string, content string) Element {
-	newnode := XmlNewDocRawNode(e.doc, nil, name, content)
-	XmlAddChild(e.ptr, newnode)
-	return &element{doc: e.doc, ptr: newnode}
+func ElementFromNode(doc unsafe.Pointer, node unsafe.Pointer) Element {
+	return &element{doc: doc, ptr: node}
 }
 
 func (e *element) Child() Element {
@@ -76,14 +72,14 @@ func (e *element) Children() chan Element {
 	return c
 }
 
-func (e *element) GetAttribute(name string) string {
-	return XmlGetProp(e.ptr, name)
-}
-
 func (e *element) Name() string {
 	node := unsafe.Pointer(C.xmlNodePtr(e.ptr).name)
 	name := C.GoString((*C.char)(node))
 	return name
+}
+
+func (e *element) String() string {
+	return ""
 }
 
 func (e *element) Type() ElementType {
@@ -91,6 +87,3 @@ func (e *element) Type() ElementType {
 	return ElementType(node_type)
 }
 
-func (e *element) String() string {
-	return XmlNodeDump(e.ptr)
-}

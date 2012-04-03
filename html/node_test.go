@@ -3,21 +3,21 @@ package html
 import "testing"
 
 func TestNodeString(t *testing.T) {
-	if New("", "").GetRootElement().String() != "" {
+	if New("", "").Child().String() != "" {
 		t.Fail()
 	}
 }
 
 func TestNodeAddChild(t *testing.T) {
 	doc := New("", "")
-	if doc.GetRootElement().String() != "" {
+	if doc.Child().String() != "" {
 		t.Fail()
 	}
 	n := doc.NewChild("test", "ing")
 	if n.Name() != "test" {
 		t.Fail()
 	}
-	if doc.GetRootElement().String() != "<test>ing</test>" {
+	if doc.Child().String() != "<test>ing</test>" {
 		t.Fail()
 	}
 }
