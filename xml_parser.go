@@ -1,23 +1,23 @@
 package libxml
 
 /*
-#include <stdio.h>
+#cgo pkg-config: libxml-2.0
+#include <stdlib.h>
 #include <string.h>
 #include <libxml/parser.h>
-
-xmlDocPtr _xmlReadMemory(char *buffer) {
-	xmlDocPtr doc;
-	doc = xmlReadMemory(buffer, strlen(buffer), "", "UTF-8", 0);
-	return doc;
-}
 */
 import "C"
 import "unsafe"
 
-// Parses the input string and returns an XML Document
-func NewXmlFromString(buf string) Document {
-	cbuf := C.CString(buf)
-	cdoc := C._xmlReadMemory(cbuf)
-	C.free(unsafe.Pointer(cbuf))
-	return &xmlDocPtr{ptr: cdoc}
+type XmlParseOptions uint32
+
+func XmlReadMemory(buffer string, url string, encoding string, options XmlParseOptions) unsafe.Pointer {
+	cbuffer := C.CString(buffer)
+	curl := C.CString(url)
+	cencoding := C.CString(encoding)
+	cdoc := C.xmlReadMemory(cbuffer, C.int(C.strlen(cbuffer)), curl, cencoding, C.int(options))
+	C.free(unsafe.Pointer(cbuffer))
+	C.free(unsafe.Pointer(curl))
+	C.free(unsafe.Pointer(cencoding))
+	return unsafe.Pointer(cdoc)
 }
